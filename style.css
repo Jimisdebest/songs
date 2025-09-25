@@ -115,7 +115,7 @@ footer audio {
   margin-top: 10px;
 }
 
-/* 🔔 Popup rechtsboven */
+/* Popup rechtsboven */
 .popup {
   position: fixed;
   top: 20px;
@@ -152,6 +152,55 @@ footer audio {
 .popup #popupArtist {
   font-size: 0.85em;
   color: #ccc;
+}
+
+/* Mini-player rechtsonder */
+.mini-player {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #181818;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 1000;
+  box-shadow: 0 0 10px #000;
+  transition: opacity 0.3s ease;
+}
+
+.mini-player img {
+  width: 50px;
+  height: 50px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.mini-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+#miniTitle {
+  font-weight: bold;
+  font-size: 1em;
+  color: #fff;
+}
+
+#miniArtist {
+  font-size: 0.85em;
+  color: #ccc;
+}
+
+#miniToggle {
+  background: none;
+  border: none;
+  color: #1db954;
+  font-size: 1.5em;
+  cursor: pointer;
 }
 
 .hidden {
