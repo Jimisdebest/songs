@@ -9,6 +9,7 @@
 <body>
   <header>
     <h1>🎶 AI Music</h1>
+    <button id="shuffleBtn">🔀 Shuffle</button>
   </header>
 
   <div class="search-bar">
@@ -20,11 +21,16 @@
   <footer>
     <div id="nowPlaying">🎧 Nu speelt: <strong>Geen track geselecteerd</strong></div>
     <audio id="mainPlayer" controls></audio>
-    <section id="feed">
-      <h3>📰 Feed</h3>
-      <ul id="feedList"></ul>
-    </section>
+    <audio id="likeSound" src="like.mp3" preload="auto"></audio>
   </footer>
+
+  <div id="popup" class="popup hidden">
+    <img id="popupCover" src="" alt="Cover" />
+    <div>
+      <div id="popupTitle"></div>
+      <div id="popupArtist"></div>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
