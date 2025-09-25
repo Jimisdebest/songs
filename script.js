@@ -37,9 +37,19 @@ const songList = document.getElementById("songList");
 const searchInput = document.getElementById("searchInput");
 const mainPlayer = document.getElementById("mainPlayer");
 const nowPlaying = document.getElementById("nowPlaying");
-const feedList = document.getElementById("feedList");
 const shuffleBtn = document.getElementById("shuffleBtn");
 const likeSound = document.getElementById("likeSound");
+
+const popup = document.getElementById("popup");
+const popupCover = document.getElementById("popupCover");
+const popupTitle = document.getElementById("popupTitle");
+const popupArtist = document.getElementById("popupArtist");
+
+const miniPlayer = document.getElementById("miniPlayer");
+const miniCover = document.getElementById("miniCover");
+const miniTitle = document.getElementById("miniTitle");
+const miniArtist = document.getElementById("miniArtist");
+const miniToggle = document.getElementById("miniToggle");
 
 function renderTracks(filter = "") {
   songList.innerHTML = "";
@@ -56,50 +66,4 @@ function renderTracks(filter = "") {
         <div class="song-info">
           <h2>${track.title}</h2>
           <div class="artist">${track.artist}</div>
-          <a class="download" href="${track.file}" download>Download</a>
-          <button class="like">❤️ Like</button>
-        </div>
-      `;
-      songDiv.querySelector(".like").onclick = (e) => {
-        e.stopPropagation();
-        likeSound.play();
-        addToFeed(track.artist, track.title, "❤️ Geliked");
-      };
-      songDiv.onclick = () => playTrack(index);
-      songList.appendChild(songDiv);
-    });
-}
-
-function playTrack(index) {
-  currentIndex = index;
-  const track = tracks[index];
-  mainPlayer.src = track.file;
-  mainPlayer.play();
-  nowPlaying.innerHTML = `🎧 Nu speelt: <strong>${track.artist} – ${track.title}</strong>`;
-  addToFeed(track.artist, track.title, "▶️ Afgespeeld");
-}
-
-function addToFeed(artist, title, action) {
-  const li = document.createElement("li");
-  li.textContent = `${action} ${artist} – ${title} om ${new Date().toLocaleTimeString()}`;
-  feedList.prepend(li);
-}
-
-mainPlayer.addEventListener("ended", () => {
-  if (currentIndex + 1 < tracks.length) {
-    playTrack(currentIndex + 1);
-  } else {
-    nowPlaying.innerHTML = `🎧 Nu speelt: <strong>Playlist afgelopen</strong>`;
-  }
-});
-
-searchInput.addEventListener("input", () => {
-  renderTracks(searchInput.value);
-});
-
-shuffleBtn.addEventListener("click", () => {
-  const randomIndex = Math.floor(Math.random() * tracks.length);
-  playTrack(randomIndex);
-});
-
-renderTracks();
+          <a class="download"
