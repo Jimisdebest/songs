@@ -24,12 +24,23 @@
     <audio id="likeSound" src="like.mp3" preload="auto"></audio>
   </footer>
 
+  <!-- Popup rechtsboven -->
   <div id="popup" class="popup hidden">
     <img id="popupCover" src="" alt="Cover" />
     <div>
       <div id="popupTitle"></div>
       <div id="popupArtist"></div>
     </div>
+  </div>
+
+  <!-- Mini-player rechtsonder -->
+  <div id="miniPlayer" class="mini-player hidden">
+    <img id="miniCover" src="" alt="Cover" />
+    <div class="mini-info">
+      <div id="miniTitle">Titel</div>
+      <div id="miniArtist">Artiest</div>
+    </div>
+    <button id="miniToggle">⏸️</button>
   </div>
 
   <script src="script.js"></script>
