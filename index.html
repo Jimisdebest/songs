@@ -15,12 +15,15 @@
     <input type="text" id="searchInput" placeholder="Zoek naar een track..." />
   </div>
 
-  <div class="song-list" id="songList"></div>
+  <main class="song-list" id="songList"></main>
 
   <footer>
     <div id="nowPlaying">🎧 Nu speelt: <strong>Geen track geselecteerd</strong></div>
     <audio id="mainPlayer" controls></audio>
-    <div id="feed"><h3>📰 Feed</h3><ul id="feedList"></ul></div>
+    <section id="feed">
+      <h3>📰 Feed</h3>
+      <ul id="feedList"></ul>
+    </section>
   </footer>
 
   <script src="script.js"></script>
