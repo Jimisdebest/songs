@@ -13,21 +13,21 @@ const tracks = [
   },
   {
     title: "Ajajippie Edit",
-    artist: "Temu Opa",
+    artist: "Jim",
     file: "Temu Opa - Ajajippie Edit.mp3",
-    cover: "boe.png"
+    cover: "temuopa.png"
   },
   {
     title: "Juf Nikki",
     artist: "Onbekend",
     file: "Juf Nikki.mp3",
-    cover: "boe.png"
+    cover: "jufnikki.png"
   },
   {
     title: "Juf Nikki (Remix)",
     artist: "Onbekend",
     file: "Juf Nikki (Remix).mp3",
-    cover: "boe.png"
+    cover: "jufnikkiremix.png"
   }
 ];
 
@@ -56,7 +56,7 @@ function renderTracks(filter = "") {
         <div class="song-info">
           <h2>${track.title}</h2>
           <div class="artist">${track.artist}</div>
-          <a class="download" href="${track.file}" download>📥 Download</a>
+          <a class="download" href="${track.file}" download>Download</a>
           <button class="like">❤️ Like</button>
         </div>
       `;
