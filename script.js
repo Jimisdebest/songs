@@ -1,8 +1,7 @@
 const tracks = [
   { title: "Tycho – Boe", description: "Rustig, mysterieus en met een eigen vibe.", file: "boe.mp3" },
-  { title: "AI Track – Bellen", description: "Een experimentele AI-compositie met belgeluiden en futuristische ritmes.", file: "bellen.mp3" },
-  { title: "Jim – Fouououout (Dansbeat Edit)", description: "Een dansbare remix van Jim zelf. Energie, ritme en AI vibes!", file: "fout.mp3" },
-  { title: "Temu Opa – Ajajippie Edit", description: "Een vrolijke en eigenzinnige edit van Temu Opa. Perfect voor een feestje!", file: "Temu Opa - Ajajippie Edit.mp3" },
+  { title: "Jim – Fouououout (Dansbeat Edit)", description: "Dansbare remix van Jim zelf. Energie, ritme en AI vibes!", file: "fout.mp3" },
+  { title: "Temu Opa – Ajajippie Edit", description: "Vrolijke en eigenzinnige edit van Temu Opa. Perfect voor een feestje!", file: "Temu Opa - Ajajippie Edit.mp3" },
   { title: "Juf Nikki", description: "Een lieve en speelse track voor de juf.", file: "Juf Nikki.mp3" },
   { title: "Juf Nikki (Remix)", description: "Een remix met extra beats en energie!", file: "Juf Nikki (Remix).mp3" }
 ];
