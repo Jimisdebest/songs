@@ -1,103 +1,103 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>AI Music</title>
-
-  <!-- SEO Meta Tags -->
-  <meta name="description" content="Luister en download unieke AI-tracks en originele muziek van Tycho en Jim.">
-  <meta name="keywords" content="AI muziek, Tycho, Jim, boe.mp3, bellen.mp3, fout.mp3, Fouououout, Dansbeat Edit, muziekhoekje">
-  <meta name="author" content="Jim">
-
-  <!-- Open Graph Meta Tags -->
-  <meta property="og:title" content="AI Music – door Jim">
-  <meta property="og:description" content="Luister naar originele muziek van Tycho en AI-tracks zoals Fouououout (Dansbeat Edit).">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://jouwgithubpagina.github.io">
-  <meta property="og:image" content="https://jouwgithubpagina.github.io/cover.jpg">
-
+  <link rel="stylesheet" href="style.css" />
   <style>
     body {
+      margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background-color: #f0f0f0;
-      color: #333;
-      text-align: center;
-      padding: 30px;
+      background-color: #121212;
+      color: #fff;
     }
-    h1 {
-      color: #0055aa;
+    header {
+      background-color: #1db954;
+      padding: 20px;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2em;
+    }
+    .search-bar {
+      padding: 15px;
+      background-color: #282828;
+      text-align: center;
+    }
+    .search-bar input {
+      width: 80%;
+      padding: 10px;
+      border-radius: 20px;
+      border: none;
+      font-size: 1em;
+    }
+    .song-list {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
     }
     .song {
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      margin: 20px auto;
-      padding: 20px;
-      max-width: 600px;
+      background-color: #181818;
+      padding: 15px;
+      border-radius: 10px;
+      cursor: pointer;
     }
-    audio {
-      width: 100%;
-      margin-top: 10px;
+    .song h2 {
+      margin: 0 0 5px;
+      font-size: 1.2em;
     }
-    .download {
+    .song p {
+      margin: 0 0 10px;
+      font-size: 0.9em;
+      color: #ccc;
+    }
+    .song a.download {
       display: inline-block;
       margin-top: 10px;
-      padding: 10px 15px;
-      background-color: #0077cc;
-      color: white;
+      padding: 8px 12px;
+      background-color: #1db954;
+      color: #fff;
       text-decoration: none;
-      border-radius: 5px;
-    }
-    .download:hover {
-      background-color: #005fa3;
+      border-radius: 20px;
+      font-size: 0.9em;
     }
     footer {
-      margin-top: 50px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background-color: #282828;
+      padding: 15px;
+      text-align: center;
       font-size: 0.9em;
-      color: #777;
+      color: #ccc;
+    }
+    footer audio {
+      width: 80%;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
-  <h1>🎶 AI Music</h1>
-  <p>Welkom in mijn digitale muziekhoekje – luister en download unieke tracks!</p>
+  <header>
+    <h1>🎶 AI Music</h1>
+  </header>
 
-  <div class="song">
-    <h2>Tycho – Boe</h2>
-    <p>Een origineel nummer van mijn vriend Tycho. Rustig, mysterieus en met een eigen vibe.</p>
-    <audio controls>
-      <source src="boe.mp3" type="audio/mpeg">
-      Je browser ondersteunt dit audioformaat niet.
-    </audio>
-    <br>
-    <a class="download" href="boe.mp3" download>📥 Download Boe</a>
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Zoek naar een track..." />
   </div>
 
-  <div class="song">
-    <h2>AI Track – Bellen</h2>
-    <p>Een experimentele AI-compositie met belgeluiden en futuristische ritmes.</p>
-    <audio controls>
-      <source src="bellen.mp3" type="audio/mpeg">
-      Je browser ondersteunt dit audioformaat niet.
-    </audio>
-    <br>
-    <a class="download" href="bellen.mp3" download>📥 Download Bellen</a>
-  </div>
-
-  <div class="song">
-    <h2>Jim – Fouououout (Dansbeat Edit)</h2>
-    <p>Een dansbare remix van Jim zelf. Energie, ritme en AI vibes!</p>
-    <audio controls>
-      <source src="fout.mp3" type="audio/mpeg">
-      Je browser ondersteunt dit audioformaat niet.
-    </audio>
-    <br>
-    <a class="download" href="fout.mp3" download>📥 Download Fouououout</a>
-  </div>
+  <div class="song-list" id="songList"></div>
 
   <footer>
-    Gemaakt door Jim – Powered by AI & Muziek 🎧
+    <div id="nowPlaying">🎧 Nu speelt: <strong>Geen track geselecteerd</strong></div>
+    <audio id="mainPlayer" controls>
+      <source src="" type="audio/mpeg" />
+    </audio>
   </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
