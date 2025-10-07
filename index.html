@@ -4,90 +4,220 @@
   <meta charset="UTF-8">
   <title>AI Muziekspeler</title>
   <style>
+    :root {
+      --bg-color: #121212;
+      --text-color: white;
+      --accent-color: #1DB954;
+    }
+    body.light {
+      --bg-color: #f5f5f5;
+      --text-color: #222;
+    }
     body {
-      background-color: #121212;
-      color: white;
+      background-color: var(--bg-color);
+      color: var(--text-color);
       font-family: 'Helvetica Neue', sans-serif;
       margin: 0;
       padding: 0;
     }
     header {
-      background-color: #1DB954;
+      background-color: var(--accent-color);
       padding: 20px;
       text-align: center;
       font-size: 24px;
       font-weight: bold;
     }
+    .toggle-mode {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: 2px solid var(--text-color);
+      color: var(--text-color);
+      padding: 5px 10px;
+      cursor: pointer;
+    }
     .player {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 50px;
+      text-align: center;
+      margin-top: 30px;
     }
     audio {
       width: 80%;
       margin-top: 20px;
     }
+    .controls {
+      margin-top: 10px;
+    }
     .playlist {
-      margin-top: 30px;
-      width: 80%;
+      margin: 30px auto;
+      width: 90%;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
     }
     .track {
+      background-color: rgba(255,255,255,0.05);
       padding: 10px;
-      border-bottom: 1px solid #333;
+      border-radius: 8px;
       cursor: pointer;
+      text-align: center;
+      transition: background 0.3s;
+      position: relative;
     }
     .track:hover {
-      background-color: #282828;
+      background-color: rgba(255,255,255,0.15);
+    }
+    .track img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+    .track-title {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    .fav-btn, .download-btn {
+      position: absolute;
+      top: 10px;
+      background: rgba(0,0,0,0.5);
+      border: none;
+      color: white;
+      padding: 5px;
+      cursor: pointer;
+      border-radius: 50%;
+    }
+    .fav-btn {
+      left: 10px;
+    }
+    .download-btn {
+      right: 10px;
+    }
+    .fav-btn.active {
+      color: red;
     }
   </style>
 </head>
 <body>
 
   <header>🎧 AI Muziekspeler</header>
+  <button class="toggle-mode" onclick="toggleMode()">🌗 Wissel modus</button>
 
   <div class="player">
     <h2 id="now-playing">Nu speelt: -</h2>
     <audio id="audio" controls autoplay></audio>
+    <div class="controls">
+      <button onclick="toggleShuffle()">🔀 Shuffle: <span id="shuffle-status">Uit</span></button>
+    </div>
   </div>
 
-  <div class="playlist" id="playlist">
-    <!-- Tracks worden hier geladen -->
-  </div>
+  <div class="playlist" id="playlist"></div>
 
   <script>
     const tracks = [
-      { title: "Fout (dansbeat edit)", file: "fout.mp3" },
-      { title: "AI Track 2", file: "ai-track-2.mp3" },
-      { title: "AI Track 3", file: "ai-track-3.mp3" }
+      { title: "AI Track 1", file: "ai-track-1.mp3", cover: "cover1.jpg" },
+      { title: "AI Track 2", file: "ai-track-2.mp3", cover: "cover2.jpg" },
+      { title: "AI Track 3", file: "ai-track-3.mp3", cover: "cover3.jpg" }
     ];
 
     const audio = document.getElementById('audio');
     const playlist = document.getElementById('playlist');
     const nowPlaying = document.getElementById('now-playing');
+    const shuffleStatus = document.getElementById('shuffle-status');
     let currentTrack = 0;
+    let shuffle = false;
+
+    // Favorieten ophalen uit localStorage
+    let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+
+    function saveFavorites() {
+      localStorage.setItem('favorites', JSON.stringify(favorites));
+    }
+
+    function toggleFavorite(index, btn) {
+      const track = tracks[index];
+      const isFav = favorites.includes(track.file);
+
+      if (isFav) {
+        favorites = favorites.filter(f => f !== track.file);
+        btn.classList.remove('active');
+      } else {
+        favorites.push(track.file);
+        btn.classList.add('active');
+        downloadTrack(track.file); // download bij favoriet maken
+      }
+
+      saveFavorites();
+    }
+
+    function downloadTrack(file) {
+      const link = document.createElement('a');
+      link.href = file;
+      link.download = file;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
 
     function loadTrack(index) {
-      audio.src = tracks[index].file;
-      nowPlaying.textContent = "Nu speelt: " + tracks[index].title;
+      currentTrack = index;
+      const track = tracks[index];
+      audio.src = track.file;
+      nowPlaying.textContent = "Nu speelt: " + track.title;
       audio.play();
     }
 
     function playNext() {
-      currentTrack = (currentTrack + 1) % tracks.length;
+      if (shuffle) {
+        currentTrack = Math.floor(Math.random() * tracks.length);
+      } else {
+        currentTrack = (currentTrack + 1) % tracks.length;
+      }
       loadTrack(currentTrack);
     }
 
-    audio.addEventListener('ended', playNext);
+    function toggleMode() {
+      document.body.classList.toggle('light');
+    }
 
+    function toggleShuffle() {
+      shuffle = !shuffle;
+      shuffleStatus.textContent = shuffle ? "Aan" : "Uit";
+    }
+
+    // Playlist opbouwen
     tracks.forEach((track, index) => {
       const div = document.createElement('div');
       div.className = 'track';
-      div.textContent = track.title;
-      div.onclick = () => {
-        currentTrack = index;
-        loadTrack(index);
+
+      const img = document.createElement('img');
+      img.src = track.cover || 'default-cover.jpg';
+      img.alt = track.title;
+      div.appendChild(img);
+
+      const title = document.createElement('div');
+      title.className = 'track-title';
+      title.textContent = track.title;
+      div.appendChild(title);
+
+      const favBtn = document.createElement('button');
+      favBtn.className = 'fav-btn';
+      favBtn.innerHTML = '❤️';
+      if (favorites.includes(track.file)) favBtn.classList.add('active');
+      favBtn.onclick = (e) => {
+        e.stopPropagation();
+        toggleFavorite(index, favBtn);
       };
+      div.appendChild(favBtn);
+
+      const downloadBtn = document.createElement('a');
+      downloadBtn.className = 'download-btn';
+      downloadBtn.innerHTML = '⬇️';
+      downloadBtn.href = track.file;
+      downloadBtn.download = track.file;
+      div.appendChild(downloadBtn);
+
+      div.onclick = () => loadTrack(index);
       playlist.appendChild(div);
     });
 
