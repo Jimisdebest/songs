@@ -96,16 +96,22 @@
     .fav-btn.active {
       color: red;
     }
+    .error {
+      color: red;
+      font-weight: bold;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
 
   <header>🎧 AI Muziekspeler</header>
-  <button class="toggle-mode" onclick="toggleMode()">🌗 Contrastmodus</button>
+  <button class="toggle-mode" onclick="toggleMode()">🌗 Wissel modus</button>
 
   <div class="player">
     <h2 id="now-playing">Nu speelt: -</h2>
     <audio id="audio" controls autoplay></audio>
+    <div class="error" id="error-message"></div>
     <div class="controls">
       <button onclick="toggleShuffle()">🔀 Shuffle: <span id="shuffle-status">Uit</span></button>
     </div>
@@ -115,19 +121,19 @@
 
   <script>
     const tracks = [
-      { title: "Fouout Dansbeat Edit", file: "fout.mp3", cover: "cover1.jpg" },
-      { title: "Boe", file: "boe.mp3", cover: "cover2.jpg" },
-      { title: "Temu Opa", file: "Temu Opa - Ajajippie Edit.mp3", cover: "cover3.jpg" }
+      { title: "AI Track 1", file: "ai-track-1.mp3", cover: "cover1.jpg" },
+      { title: "AI Track 2", file: "ai-track-2.mp3", cover: "cover2.jpg" },
+      { title: "Fout Track", file: "Fout.mp3", cover: "fout.png" }
     ];
 
     const audio = document.getElementById('audio');
     const playlist = document.getElementById('playlist');
     const nowPlaying = document.getElementById('now-playing');
+    const errorMessage = document.getElementById('error-message');
     const shuffleStatus = document.getElementById('shuffle-status');
     let currentTrack = 0;
     let shuffle = false;
 
-    // Favorieten ophalen uit localStorage
     let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
 
     function saveFavorites() {
@@ -144,7 +150,7 @@
       } else {
         favorites.push(track.file);
         btn.classList.add('active');
-        downloadTrack(track.file); // download bij favoriet maken
+        downloadTrack(track.file);
       }
 
       saveFavorites();
@@ -164,6 +170,7 @@
       const track = tracks[index];
       audio.src = track.file;
       nowPlaying.textContent = "Nu speelt: " + track.title;
+      errorMessage.textContent = "";
       audio.play();
     }
 
@@ -185,7 +192,10 @@
       shuffleStatus.textContent = shuffle ? "Aan" : "Uit";
     }
 
-    // Playlist opbouwen
+    audio.onerror = () => {
+      errorMessage.textContent = "⚠️ Kan bestand niet laden: " + tracks[currentTrack].file;
+    };
+
     tracks.forEach((track, index) => {
       const div = document.createElement('div');
       div.className = 'track';
@@ -221,7 +231,6 @@
       playlist.appendChild(div);
     });
 
-    // Start met eerste track
     loadTrack(currentTrack);
   </script>
 
