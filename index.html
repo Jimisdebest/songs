@@ -101,6 +101,11 @@
       font-weight: bold;
       margin-top: 10px;
     }
+    .section-title {
+      text-align: center;
+      font-size: 20px;
+      margin-top: 40px;
+    }
   </style>
 </head>
 <body>
@@ -113,36 +118,47 @@
     <audio id="audio" controls autoplay></audio>
     <div class="error" id="error-message"></div>
     <div class="controls">
-      <button onclick="toggleShuffle()">🔀 Shuffle: <span id="shuffle-status">Uit</span></button>
+      <button onclick="playNext()">⏭️ Volgende</button>
     </div>
   </div>
 
+  <h2 class="section-title">📌 Favorieten</h2>
+  <div class="playlist" id="favorites-list"></div>
+
+  <h2 class="section-title">📁 Alle Tracks</h2>
   <div class="playlist" id="playlist"></div>
 
   <script>
-   const tracks = [
-  { title: "Boe", file: "boe.mp3", cover: "boe.png" },
-  { title: "Temu Opa", file: "Temu Opa.mp3", cover: "Temu Opa.png" },
-  { title: "Fout (Dansbeat Edit)", file: "Fout.mp3", cover: "fout.png" },
-  { title: "Jeanica Brengt De Party", file: "Jeanica Brengt De Party.mp3", cover: "Jeanica Brengt De Party.png" },
-  { title: "Kinderhandjes en Dierenhart", file: "Kinderhandjes en Dierenhart.mp3", cover: "Kinderhandjes en Dierenhart.png" },
-  { title: "Juf Nikki", file: "Juf Nikki.mp3", cover: "Juf Nikki.png" },
-  { title: "Juf Nikki (Remix)", file: "Juf Nikki (Remix).mp3", cover: "Juf Nikki (Remix).png" }
-];
-
+    const tracks = [
+      { title: "Boe", file: "boe.mp3", cover: "boe.png" },
+      { title: "Temu Opa", file: "Temu Opa.mp3", cover: "Temu Opa.png" },
+      { title: "Fout (Dansbeat Edit)", file: "Fout.mp3", cover: "fout.png" },
+      { title: "Jeanica Brengt De Party", file: "Jeanica Brengt De Party.mp3", cover: "Jeanica Brengt De Party.png" },
+      { title: "Kinderhandjes en Dierenhart", file: "Kinderhandjes en Dierenhart.mp3", cover: "Kinderhandjes en Dierenhart.png" },
+      { title: "Juf Nikki", file: "Juf Nikki.mp3", cover: "Juf Nikki.png" },
+      { title: "Juf Nikki (Remix)", file: "Juf Nikki (Remix).mp3", cover: "Juf Nikki (Remix).png" }
+    ];
 
     const audio = document.getElementById('audio');
     const playlist = document.getElementById('playlist');
+    const favoritesList = document.getElementById('favorites-list');
     const nowPlaying = document.getElementById('now-playing');
     const errorMessage = document.getElementById('error-message');
-    const shuffleStatus = document.getElementById('shuffle-status');
-    let currentTrack = 0;
-    let shuffle = false;
 
     let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+    let playQueue = [];
+    let currentTrack = 0;
 
     function saveFavorites() {
       localStorage.setItem('favorites', JSON.stringify(favorites));
+      updateFavoritesList();
+      buildPlayQueue();
+    }
+
+    function buildPlayQueue() {
+      const favTracks = tracks.filter(t => favorites.includes(t.file));
+      const otherTracks = tracks.filter(t => !favorites.includes(t.file));
+      playQueue = [...favTracks, ...otherTracks];
     }
 
     function toggleFavorite(index, btn) {
@@ -161,6 +177,11 @@
       saveFavorites();
     }
 
+    function removeFavorite(file) {
+      favorites = favorites.filter(f => f !== file);
+      saveFavorites();
+    }
+
     function downloadTrack(file) {
       const link = document.createElement('a');
       link.href = file;
@@ -172,7 +193,7 @@
 
     function loadTrack(index) {
       currentTrack = index;
-      const track = tracks[index];
+      const track = playQueue[index];
       audio.src = track.file;
       nowPlaying.textContent = "Nu speelt: " + track.title;
       errorMessage.textContent = "";
@@ -180,11 +201,7 @@
     }
 
     function playNext() {
-      if (shuffle) {
-        currentTrack = Math.floor(Math.random() * tracks.length);
-      } else {
-        currentTrack = (currentTrack + 1) % tracks.length;
-      }
+      currentTrack = (currentTrack + 1) % playQueue.length;
       loadTrack(currentTrack);
     }
 
@@ -192,14 +209,46 @@
       document.body.classList.toggle('light');
     }
 
-    function toggleShuffle() {
-      shuffle = !shuffle;
-      shuffleStatus.textContent = shuffle ? "Aan" : "Uit";
-    }
-
     audio.onerror = () => {
-      errorMessage.textContent = "⚠️ Kan bestand niet laden: " + tracks[currentTrack].file;
+      errorMessage.textContent = "⚠️ Kan bestand niet laden: " + playQueue[currentTrack].file;
     };
+
+    audio.addEventListener('ended', playNext);
+
+    function updateFavoritesList() {
+      favoritesList.innerHTML = '';
+      const favTracks = tracks.filter(t => favorites.includes(t.file));
+      favTracks.forEach(track => {
+        const div = document.createElement('div');
+        div.className = 'track';
+
+        const img = document.createElement('img');
+        img.src = track.cover || 'default-cover.jpg';
+        img.alt = track.title;
+        div.appendChild(img);
+
+        const title = document.createElement('div');
+        title.className = 'track-title';
+        title.textContent = track.title;
+        div.appendChild(title);
+
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'fav-btn active';
+        removeBtn.innerHTML = '🗑️';
+        removeBtn.onclick = (e) => {
+          e.stopPropagation();
+          removeFavorite(track.file);
+        };
+        div.appendChild(removeBtn);
+
+        div.onclick = () => {
+          const index = playQueue.findIndex(t => t.file === track.file);
+          if (index !== -1) loadTrack(index);
+        };
+
+        favoritesList.appendChild(div);
+      });
+    }
 
     tracks.forEach((track, index) => {
       const div = document.createElement('div');
@@ -223,21 +272,4 @@
         e.stopPropagation();
         toggleFavorite(index, favBtn);
       };
-      div.appendChild(favBtn);
-
-      const downloadBtn = document.createElement('a');
-      downloadBtn.className = 'download-btn';
-      downloadBtn.innerHTML = '⬇️';
-      downloadBtn.href = track.file;
-      downloadBtn.download = track.file;
-      div.appendChild(downloadBtn);
-
-      div.onclick = () => loadTrack(index);
-      playlist.appendChild(div);
-    });
-
-    loadTrack(currentTrack);
-  </script>
-
-</body>
-</html>
+      div.appendChild
