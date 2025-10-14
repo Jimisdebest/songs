@@ -1,9 +1,3 @@
-<!-- To Do -->
-
-<!-- Playlist maken -->
-<!-- Automatische Like Playlist -->
-<!-- Zoekfunctie -->
-
 <!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -53,6 +47,18 @@
     }
     .controls {
       margin-top: 10px;
+    }
+    .search-bar {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .search-bar input {
+      padding: 10px;
+      width: 80%;
+      max-width: 400px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid var(--accent-color);
     }
     .playlist {
       margin: 30px auto;
@@ -115,28 +121,30 @@
     </div>
   </div>
 
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Zoek een nummer..." oninput="filterTracks()">
+  </div>
+
   <div class="playlist" id="playlist"></div>
 
   <script>
     const tracks = [
-  { title: "Knor", file: "Knor.mp3", cover: "Knor.png" },
-  { title: "Boe", file: "boe.mp3", cover: "boe.png" },
-  { title: "Temu Opa", file: "Temu Opa.mp3", cover: "Temu Opa.png" },
-  { title: "Fout (Dansbeat Edit)", file: "Fout.mp3", cover: "fout.png" },
-  { title: "Jeanica Brengt De Party", file: "Jeanica Brengt De Party.mp3", cover: "Jeanica Brengt De Party.png" },
-  { title: "Kinderhandjes en Dierenhart", file: "Kinderhandjes en Dierenhart.mp3", cover: "Kinderhandjes en Dierenhart.png" },
-  { title: "Juf Nikki", file: "Juf Nikki.mp3", cover: "Juf Nikki.png" },
-  { title: "Juf Nikki (Remix)", file: "Juf Nikki (Remix).mp3", cover: "Juf Nikki (Remix).png" },
-  { title: "Het Jeugdjournaal", file: "Het Jeugdjournaal.mp3", cover: "Het Jeugdjournaal.png" },
-  { title: "Windows 12 (De Toekomst Schrijft)", file: "Windows 12.mp3", cover: "Windows 12.png" },
-  { title: "My Rollercoaster", file: "My Rollercoaster.mp3", cover: "My Rollercoaster.png" },
-  { title: "Goedemorgen Zonneschijn", file: "Goedemorgen Zonneschijn.mp3", cover: "Goedemorgen Zonneschijn.png" },
-  { title: "Level Up", file: "Level Up.mp3", cover: "Level Up.png" },
-  { title: "De Fietscaravan", file: "De fietscaravan.mp3", cover: "De Fietscaravan.png" },
-  { title: "Mycernos", file: "Mycernos.mp3", cover: "Mycernos.png" }
-  
-  ];
-
+      { title: "Knor", file: "Knor.mp3", cover: "Knor.png" },
+      { title: "Boe", file: "boe.mp3", cover: "boe.png" },
+      { title: "Temu Opa", file: "Temu Opa.mp3", cover: "Temu Opa.png" },
+      { title: "Fout (Dansbeat Edit)", file: "Fout.mp3", cover: "fout.png" },
+      { title: "Jeanica Brengt De Party", file: "Jeanica Brengt De Party.mp3", cover: "Jeanica Brengt De Party.png" },
+      { title: "Kinderhandjes en Dierenhart", file: "Kinderhandjes en Dierenhart.mp3", cover: "Kinderhandjes en Dierenhart.png" },
+      { title: "Juf Nikki", file: "Juf Nikki.mp3", cover: "Juf Nikki.png" },
+      { title: "Juf Nikki (Remix)", file: "Juf Nikki (Remix).mp3", cover: "Juf Nikki (Remix).png" },
+      { title: "Het Jeugdjournaal", file: "Het Jeugdjournaal.mp3", cover: "Het Jeugdjournaal.png" },
+      { title: "Windows 12 (De Toekomst Schrijft)", file: "Windows 12.mp3", cover: "Windows 12.png" },
+      { title: "My Rollercoaster", file: "My Rollercoaster.mp3", cover: "My Rollercoaster.png" },
+      { title: "Goedemorgen Zonneschijn", file: "Goedemorgen Zonneschijn.mp3", cover: "Goedemorgen Zonneschijn.png" },
+      { title: "Level Up", file: "Level Up.mp3", cover: "Level Up.png" },
+      { title: "De Fietscaravan", file: "De fietscaravan.mp3", cover: "De Fietscaravan.png" },
+      { title: "Mycernos", file: "Mycernos.mp3", cover: "Mycernos.png" }
+    ];
 
     const audio = document.getElementById('audio');
     const playlist = document.getElementById('playlist');
@@ -161,6 +169,16 @@
 
     function toggleMode() {
       document.body.classList.toggle('light');
+    }
+
+    function filterTracks() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const trackDivs = document.querySelectorAll('.track');
+
+      tracks.forEach((track, index) => {
+        const match = track.title.toLowerCase().includes(query);
+        trackDivs[index].style.display = match ? 'block' : 'none';
+      });
     }
 
     audio.onerror = () => {
