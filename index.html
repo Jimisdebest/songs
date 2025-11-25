@@ -1,223 +1,567 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <title>AI Muziekspeler</title>
-  <link rel="icon" type="image/png" href="favicon.png">
-  <style>
-    :root {
-      --bg-color: #121212;
-      --text-color: white;
-      --accent-color: #1DB954;
-    }
-    body.light {
-      --bg-color: #f5f5f5;
-      --text-color: #222;
-    }
-    body {
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      font-family: 'Helvetica Neue', sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background-color: var(--accent-color);
-      padding: 20px;
-      text-align: center;
-      font-size: 24px;
-      font-weight: bold;
-    }
-    .toggle-mode {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      background: none;
-      border: 2px solid var(--text-color);
-      color: var(--text-color);
-      padding: 5px 10px;
-      cursor: pointer;
-    }
-    .player {
-      text-align: center;
-      margin-top: 30px;
-    }
-    audio {
-      width: 80%;
-      margin-top: 20px;
-    }
-    .controls {
-      margin-top: 10px;
-    }
-    .search-bar {
-      text-align: center;
-      margin-top: 20px;
-    }
-    .search-bar input {
-      padding: 10px;
-      width: 80%;
-      max-width: 400px;
-      font-size: 16px;
-      border-radius: 6px;
-      border: 1px solid var(--accent-color);
-    }
-    .playlist {
-      margin: 30px auto;
-      width: 90%;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 20px;
-    }
-    .track {
-      background-color: rgba(255,255,255,0.05);
-      padding: 10px;
-      border-radius: 8px;
-      cursor: pointer;
-      text-align: center;
-      transition: background 0.3s;
-      position: relative;
-    }
-    .track:hover {
-      background-color: rgba(255,255,255,0.15);
-    }
-    .track img {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-      border-radius: 6px;
-    }
-    .track-title {
-      margin-top: 10px;
-      font-weight: bold;
-    }
-    .download-btn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: rgba(0,0,0,0.5);
-      border: none;
-      color: white;
-      padding: 5px;
-      cursor: pointer;
-      border-radius: 50%;
-    }
-    .error {
-      color: red;
-      font-weight: bold;
-      margin-top: 10px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Muziekplatform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #1e1e2f, #2a2a40);
+            padding: 20px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #ff6b6b, #ffa36c);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .logo-icon {
+            font-size: 28px;
+            color: #ff6b6b;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            padding: 8px 15px;
+            width: 300px;
+            transition: all 0.3s ease;
+        }
+
+        .search-bar:focus-within {
+            background-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.5);
+        }
+
+        .search-bar input {
+            background: transparent;
+            border: none;
+            color: white;
+            width: 100%;
+            padding: 5px 10px;
+            outline: none;
+            font-size: 16px;
+        }
+
+        .search-bar input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .search-icon {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 18px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 40px 0;
+        }
+
+        .section-title {
+            font-size: 28px;
+            margin-bottom: 25px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #ff6b6b, #ffa36c);
+            border-radius: 2px;
+        }
+
+        /* Tracks Grid */
+        .tracks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .track-card {
+            background: rgba(30, 30, 47, 0.7);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .track-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+            background: rgba(40, 40, 60, 0.8);
+        }
+
+        .track-cover {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .track-info {
+            padding: 15px;
+        }
+
+        .track-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .track-artist {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Player */
+        .player {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(90deg, #1e1e2f, #2a2a40);
+            padding: 15px 0;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            display: none;
+        }
+
+        .player.active {
+            display: block;
+        }
+
+        .player-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            width: 30%;
+        }
+
+        .player-cover {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .player-text h3 {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .player-text p {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .player-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 40%;
+        }
+
+        .control-buttons {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 10px;
+        }
+
+        .control-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .control-btn:hover {
+            color: #ff6b6b;
+        }
+
+        .play-btn {
+            background: #ff6b6b;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .play-btn:hover {
+            background: #ff5252;
+            color: white;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #ffa36c);
+            border-radius: 5px;
+            width: 0%;
+        }
+
+        .player-time {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 5px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .player-volume {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 20%;
+        }
+
+        .volume-icon {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .volume-slider {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .volume-progress {
+            height: 100%;
+            background: #ff6b6b;
+            border-radius: 2px;
+            width: 70%;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .search-bar {
+                width: 100%;
+                max-width: 400px;
+            }
+
+            .tracks-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 15px;
+            }
+
+            .player-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .player-info, .player-controls, .player-volume {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">🎵</span>
+                    <h1>AI Muziek</h1>
+                </div>
+                <div class="search-bar">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="search-input" placeholder="Zoek muziek...">
+                </div>
+            </div>
+        </div>
+    </header>
 
-  <header>🎧 AI Muziekspeler</header>
-  <button class="toggle-mode" onclick="toggleMode()">🌗 Wissel modus</button>
+    <main class="main-content">
+        <div class="container">
+            <h2 class="section-title">AI-gegenereerde Muziek</h2>
+            <div class="tracks-grid" id="tracks-container">
+                <!-- Tracks worden hier ingevoegd via JavaScript -->
+            </div>
+        </div>
+    </main>
 
-  <div class="player">
-    <h2 id="now-playing">Nu speelt: -</h2>
-    <audio id="audio" controls autoplay></audio>
-    <div class="error" id="error-message"></div>
-    <div class="controls">
-      <button onclick="playNext()">⏭️ Volgende</button>
+    <div class="player" id="player">
+        <div class="player-content">
+            <div class="player-info">
+                <img id="player-cover" class="player-cover" src="" alt="Cover">
+                <div class="player-text">
+                    <h3 id="player-title">Track Titel</h3>
+                    <p id="player-artist">Artiest</p>
+                </div>
+            </div>
+            <div class="player-controls">
+                <div class="control-buttons">
+                    <button class="control-btn" id="prev-btn">⏮</button>
+                    <button class="control-btn play-btn" id="play-btn">▶</button>
+                    <button class="control-btn" id="next-btn">⏭</button>
+                </div>
+                <div class="progress-container" id="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                <div class="player-time">
+                    <span id="current-time">0:00</span>
+                    <span id="duration">0:00</span>
+                </div>
+            </div>
+            <div class="player-volume">
+                <span class="volume-icon">🔊</span>
+                <div class="volume-slider">
+                    <div class="volume-progress"></div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <div class="search-bar">
-    <input type="text" id="searchInput" placeholder="Zoek een nummer..." oninput="filterTracks()">
-  </div>
+    <script>
+        // Muziekdata
+        const tracks = [
+            { title: "Knor - Tycho", file: "Knor.mp3", cover: "Knor.png" },
+            { title: "Boe - Tycho", file: "boe.mp3", cover: "boe.png" },
+            { title: "Temu Opa - Jim", file: "Temu Opa.mp3", cover: "Temu Opa.png" },
+            { title: "Fout (Dansbeat Edit) - Jim", file: "Fout.mp3", cover: "fout.png" },
+            { title: "Jeanica Brengt De Party - Jim", file: "Jeanica Brengt De Party.mp3", cover: "Jeanica Brengt De Party.png" },
+            { title: "Juf Nikki - Jim", file: "Juf Nikki.mp3", cover: "Juf Nikki.png" },
+            { title: "Juf Nikki (Remix) - Jim", file: "Juf Nikki (Remix).mp3", cover: "Juf Nikki (Remix).png" },
+            { title: "Het Jeugdjournaal - Jim & Tycho", file: "Het Jeugdjournaal.mp3", cover: "Het Jeugdjournaal.png" },
+            { title: "Windows 12 (De Toekomst Schrijft) - Tycho", file: "Windows 12.mp3", cover: "Windows 12.png" },
+            { title: "My Rollercoaster - Tycho", file: "My Rollercoaster.mp3", cover: "My Rollercoaster.png" },
+            { title: "Goedemorgen Zonneschijn - Tycho", file: "Goedemorgen Zonneschijn.mp3", cover: "Goedemorgen Zonneschijn.png" },
+            { title: "Level Up - Tycho", file: "Level Up.mp3", cover: "Level Up.png" },
+            { title: "De Fietscaravan - Tycho", file: "De fietscaravan.mp3", cover: "De Fietscaravan.png" },
+            { title: "Mycernos - Tycho", file: "Mycernos.mp3", cover: "Mycernos.png" },
+            { title: "Bellen Bellen - Jim", file: "Bellen Bellen.mp3", cover: "Bellen Bellen.png" },
+            { title: "Gescheurde Broek - Feliciano", file: "Gescheurde Broek.mp3", cover: "Gescheurde Broek.png" },
+            { title: "100 % NL Ochtend Power Up - Jim", file: "100powerup.mp3", cover: "100powerup.png" }
+        ];
 
-  <div class="playlist" id="playlist"></div>
+        // DOM-elementen
+        const tracksContainer = document.getElementById('tracks-container');
+        const searchInput = document.getElementById('search-input');
+        const player = document.getElementById('player');
+        const playerCover = document.getElementById('player-cover');
+        const playerTitle = document.getElementById('player-title');
+        const playerArtist = document.getElementById('player-artist');
+        const playBtn = document.getElementById('play-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const progressContainer = document.getElementById('progress-container');
+        const currentTimeEl = document.getElementById('current-time');
+        const durationEl = document.getElementById('duration');
 
-  <script>
-   const tracks = [
-  { title: "Knor - Tycho", file: "Knor.mp3", cover: "Knor.png" },
-  { title: "Boe - Tycho", file: "boe.mp3", cover: "boe.png" },
-  { title: "Temu Opa - Jim", file: "Temu Opa.mp3", cover: "Temu Opa.png" },
-  { title: "Fout (Dansbeat Edit) - Jim", file: "Fout.mp3", cover: "fout.png" },
-  { title: "Jeanica Brengt De Party - Jim", file: "Jeanica Brengt De Party.mp3", cover: "Jeanica Brengt De Party.png" },
-  { title: "Juf Nikki - Jim", file: "Juf Nikki.mp3", cover: "Juf Nikki.png" },
-  { title: "Juf Nikki (Remix) - Jim", file: "Juf Nikki (Remix).mp3", cover: "Juf Nikki (Remix).png" },
-  { title: "Het Jeugdjournaal - Jim & Tycho", file: "Het Jeugdjournaal.mp3", cover: "Het Jeugdjournaal.png" },
-  { title: "Windows 12 (De Toekomst Schrijft) - Tycho", file: "Windows 12.mp3", cover: "Windows 12.png" },
-  { title: "My Rollercoaster - Tycho", file: "My Rollercoaster.mp3", cover: "My Rollercoaster.png" },
-  { title: "Goedemorgen Zonneschijn - Tycho", file: "Goedemorgen Zonneschijn.mp3", cover: "Goedemorgen Zonneschijn.png" },
-  { title: "Level Up - Tycho", file: "Level Up.mp3", cover: "Level Up.png" },
-  { title: "De Fietscaravan - Tycho", file: "De fietscaravan.mp3", cover: "De Fietscaravan.png" },
-  { title: "Mycernos - Tycho", file: "Mycernos.mp3", cover: "Mycernos.png" },
-  { title: "Bellen Bellen - Jim", file: "Bellen Bellen.mp3", cover: "Bellen Bellen.png" },
-  { title: "Gescheurde Broek - Feliciano", file: "Gescheurde Broek.mp3", cover: "Gescheurde Broek.png" },
-  { title: "100 % NL Ochtend Power Up - Jim", file: "100powerup.mp3", cover: "100powerup.png" }
-];
+        // Audio-element
+        const audio = new Audio();
+        let isPlaying = false;
+        let currentTrackIndex = 0;
 
+        // Tracks weergeven
+        function displayTracks(tracksToDisplay) {
+            tracksContainer.innerHTML = '';
+            
+            tracksToDisplay.forEach((track, index) => {
+                const [title, artist] = track.title.split(' - ');
+                
+                const trackCard = document.createElement('div');
+                trackCard.className = 'track-card';
+                trackCard.innerHTML = `
+                    <img src="${track.cover}" alt="${title}" class="track-cover">
+                    <div class="track-info">
+                        <h3 class="track-title">${title}</h3>
+                        <p class="track-artist">${artist}</p>
+                    </div>
+                `;
+                
+                trackCard.addEventListener('click', () => {
+                    playTrack(index);
+                });
+                
+                tracksContainer.appendChild(trackCard);
+            });
+        }
 
-    const audio = document.getElementById('audio');
-    const playlist = document.getElementById('playlist');
-    const nowPlaying = document.getElementById('now-playing');
-    const errorMessage = document.getElementById('error-message');
+        // Track afspelen
+        function playTrack(index) {
+            currentTrackIndex = index;
+            const track = tracks[index];
+            const [title, artist] = track.title.split(' - ');
+            
+            audio.src = track.file;
+            playerCover.src = track.cover;
+            playerTitle.textContent = title;
+            playerArtist.textContent = artist;
+            
+            player.classList.add('active');
+            playTrackAudio();
+        }
 
-    let currentTrack = 0;
+        // Audio afspelen
+        function playTrackAudio() {
+            audio.play();
+            isPlaying = true;
+            playBtn.textContent = '⏸';
+        }
 
-    function loadTrack(index) {
-      currentTrack = index;
-      const track = tracks[index];
-      audio.src = track.file;
-      nowPlaying.textContent = "Nu speelt: " + track.title;
-      errorMessage.textContent = "";
-      audio.play();
-    }
+        // Audio pauzeren
+        function pauseTrackAudio() {
+            audio.pause();
+            isPlaying = false;
+            playBtn.textContent = '▶';
+        }
 
-    function playNext() {
-      currentTrack = (currentTrack + 1) % tracks.length;
-      loadTrack(currentTrack);
-    }
+        // Volgende track
+        function nextTrack() {
+            currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
+            playTrack(currentTrackIndex);
+        }
 
-    function toggleMode() {
-      document.body.classList.toggle('light');
-    }
+        // Vorige track
+        function prevTrack() {
+            currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
+            playTrack(currentTrackIndex);
+        }
 
-    function filterTracks() {
-      const query = document.getElementById('searchInput').value.toLowerCase();
-      const trackDivs = document.querySelectorAll('.track');
+        // Tijdformattering
+        function formatTime(seconds) {
+            const min = Math.floor(seconds / 60);
+            const sec = Math.floor(seconds % 60);
+            return `${min}:${sec < 10 ? '0' : ''}${sec}`;
+        }
 
-      tracks.forEach((track, index) => {
-        const match = track.title.toLowerCase().includes(query);
-        trackDivs[index].style.display = match ? 'block' : 'none';
-      });
-    }
+        // Zoekfunctie
+        function searchTracks() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const filteredTracks = tracks.filter(track => 
+                track.title.toLowerCase().includes(searchTerm)
+            );
+            displayTracks(filteredTracks);
+        }
 
-    audio.onerror = () => {
-      errorMessage.textContent = "⚠️ Kan lied niet laden: " + tracks[currentTrack].file;
-    };
+        // Event listeners
+        playBtn.addEventListener('click', () => {
+            if (isPlaying) {
+                pauseTrackAudio();
+            } else {
+                playTrackAudio();
+            }
+        });
 
-    audio.addEventListener('ended', playNext);
+        nextBtn.addEventListener('click', nextTrack);
+        prevBtn.addEventListener('click', prevTrack);
 
-    tracks.forEach((track, index) => {
-      const div = document.createElement('div');
-      div.className = 'track';
+        audio.addEventListener('timeupdate', () => {
+            const currentTime = audio.currentTime;
+            const duration = audio.duration;
+            
+            if (duration) {
+                const progressPercent = (currentTime / duration) * 100;
+                progressBar.style.width = `${progressPercent}%`;
+                
+                currentTimeEl.textContent = formatTime(currentTime);
+                durationEl.textContent = formatTime(duration);
+            }
+        });
 
-      const img = document.createElement('img');
-      img.src = track.cover || 'default-cover.jpg';
-      img.alt = track.title;
-      div.appendChild(img);
+        progressContainer.addEventListener('click', (e) => {
+            const width = progressContainer.clientWidth;
+            const clickX = e.offsetX;
+            const duration = audio.duration;
+            
+            audio.currentTime = (clickX / width) * duration;
+        });
 
-      const title = document.createElement('div');
-      title.className = 'track-title';
-      title.textContent = track.title;
-      div.appendChild(title);
+        audio.addEventListener('ended', nextTrack);
 
-      const downloadBtn = document.createElement('a');
-      downloadBtn.className = 'download-btn';
-      downloadBtn.innerHTML = '⬇️';
-      downloadBtn.href = track.file;
-      downloadBtn.download = track.file;
-      div.appendChild(downloadBtn);
+        searchInput.addEventListener('input', searchTracks);
 
-      div.onclick = () => loadTrack(index);
-      playlist.appendChild(div);
-    });
-
-    loadTrack(currentTrack);
-  </script>
-
+        // Initialisatie
+        displayTracks(tracks);
+    </script>
 </body>
 </html>
