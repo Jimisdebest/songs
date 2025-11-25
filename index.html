@@ -186,7 +186,7 @@
     }
 
     audio.onerror = () => {
-      errorMessage.textContent = "⚠️ Kan bestand niet laden: " + tracks[currentTrack].file;
+      errorMessage.textContent = "⚠️ Kan lied niet laden: " + tracks[currentTrack].file;
     };
 
     audio.addEventListener('ended', playNext);
