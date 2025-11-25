@@ -589,10 +589,12 @@
         let currentTrackIndex = 0;
         let isShuffled = false;
         let isRepeating = false;
+        let currentDisplayedTracks = [...tracks]; // Houd bij welke tracks momenteel worden weergegeven
 
         // Tracks weergeven
         function displayTracks(tracksToDisplay) {
             tracksContainer.innerHTML = '';
+            currentDisplayedTracks = [...tracksToDisplay]; // Update de huidige weergave
             
             tracksToDisplay.forEach((track, index) => {
                 const [title, artist] = track.title.split(' - ');
@@ -607,8 +609,11 @@
                     </div>
                 `;
                 
+                // Gebruik de index van de huidige weergave, niet de originele array
                 trackCard.addEventListener('click', () => {
-                    playTrack(index);
+                    // Zoek het originele indexnummer van dit nummer in de volledige tracks array
+                    const originalIndex = tracks.findIndex(t => t.title === track.title);
+                    playTrack(originalIndex);
                 });
                 
                 tracksContainer.appendChild(trackCard);
